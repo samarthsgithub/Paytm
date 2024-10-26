@@ -1,0 +1,129 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-card {
+    width: 320px; /* Adjust width as needed */
+    height:336px;
+    padding: 24px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.modal-title {
+    margin-top:-1rem;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    margin-left:2.6rem;
+}
+
+
+.logo-image {
+    /* border:1px solid black; */
+    width:20px;
+    margin-left:100px;
+    margin-top:-1rem;
+}
+
+.logo-image {
+    width: 80px; /* Adjust the width as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.receiver-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.receiver-name-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.receiver-name {
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.receiver-username {
+    font-size: 0.875rem;
+    color: #6B7280; /* Gray 500 */
+}
+
+.amount-label {
+    display: block;
+    color: #374151; /* Gray 700 */
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+
+}
+
+.amount-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #D1D5DB; /* Gray 300 */
+    border-radius: 4px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.transfer-button {
+    width: 100%;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.transfer-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* .close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: red;
+} */
+
+.top-div{
+    display:flex;
+    justify-content:space-between
+}
+.close-button{
+    margin-top:-2rem;
+    margin-left:2rem;
+}

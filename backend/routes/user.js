@@ -23,7 +23,7 @@ router.post('/signup',async function(req,res){
          })
          
          const userId = newUser._id;
-         const jwttoken = jwt.sign({userId},JWT_SECRET,{expiresIn:'1h'});
+        //  const jwttoken = jwt.sign({userId},JWT_SECRET,{expiresIn:'1h'});
          const newAccount = await Account({
             userId,
             balance:1 + Math.random()*10000
@@ -31,7 +31,7 @@ router.post('/signup',async function(req,res){
          
          await newUser.save();
          await newAccount.save();
-         res.status(200).json({message:"user created successfully",jwttoken});
+         res.status(200).json({message:"user created successfully"});
        }catch(err){
           console.error(err);
            res.status(500).json({message:"server error while login"});
@@ -39,10 +39,10 @@ router.post('/signup',async function(req,res){
 });
 
 router.post('/signin',async function(req,res){
-    const{username,password} = req.body;
+    const{email,password} = req.body;
     try{
       const user = await User.findOne({
-        username:username,
+        email:email,
         password:password
       });
       if(!user){
@@ -52,7 +52,7 @@ router.post('/signin',async function(req,res){
         userId:user._id
       },JWT_SECRET);
 
-      res.json({
+      res.status(201).json({
         message:"signin successful",
         token:token
       })
@@ -64,9 +64,14 @@ router.post('/signin',async function(req,res){
     }
 })
 
-router.put('/',userMiddleware,async function(req,res){
-    await User.updateOne({_id:req.userid},req.body);
-    res.json({
+router.put('/update',userMiddleware,async function(req,res){
+  const {username,password} = req.body;
+    const result = await User.updateOne({_id:req.user.userId},req.body);
+    // const findUser = await User.findOne({_id:req.user.userId})
+    if (result.nModified === 0) {
+      return res.status(400).json({ message: "No changes made to user" });
+    }
+    res.status(201).json({
         message:"User updated successfully"
     })
 });
@@ -75,16 +80,29 @@ router.get('/bulk',userMiddleware,async function(req,res){
     
     const filter = req.query.filter||"";
 
-    const allUsers = User.find({
-        username:{"$regex":filter}
+    const allUsers = await User.find({
+        username:{"$regex":filter,"$options":"i"}
     })
     res.json({
         user: allUsers.map(user=>({
             username:user.username,
+            email:user.email,
             _id:user._id
         }))
     })
 
+})
+router.get('/me',userMiddleware,async function(req,res){
+  try {
+    const user = await User.findById(req.user.userId).select('username email'); // Only fetch username and email
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+} catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error while fetching user details" });
+}
 })
 
 
