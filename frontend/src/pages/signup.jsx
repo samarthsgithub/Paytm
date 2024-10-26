@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion";
@@ -111,7 +111,7 @@ function Signup() {
                         </form>
                         <p className="text-center mt-4">
                             Already have an account?{" "}
-                            <a href="/signin" className="text-green-500 font-bold">Signin</a>
+                            <Link to="/signin" className="text-green-500 font-bold">Signin</Link>
                         </p>
                     </motion.div>
                 </div>

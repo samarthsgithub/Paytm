@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import axios from "axios";
-import { useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion";
 import image from "../media/Login-vector.png";
@@ -96,7 +96,7 @@ function Signin() {
                         </form>
                         <p className="text-center mt-4">
                             Don't have an account?{" "}
-                            <a href="/signup" className="text-green-500 font-bold">Sign Up</a>
+                            <Link to="/signup" className="text-green-500 font-bold">Sign Up</Link>
                         </p>
                     </motion.div>
                 </div>
