@@ -3,7 +3,7 @@ import {BrowserRouter,Routes,Route} from "react-router-dom";
 import Home from "./pages/home";
 import Signup from "./pages/signup";
 import Signin from "./pages/signin";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard";
 import SendMoney from "./pages/sendMoney";
 import './index.css';
 
