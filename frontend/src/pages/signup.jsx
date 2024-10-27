@@ -5,6 +5,7 @@ import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion";
 import image from "../media/SignUp-vector.png";
 import Navbar from "../components/Navbar";
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Signup() {
     const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +32,7 @@ function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`http://localhost:3000/api/v1/user/signup`, { email, username, password });
+            const response = await axios.post(`${API_URL}/api/v1/user/signup`, { email, username, password });
             setEmail('');
             setuserName('');
             setPassword('');

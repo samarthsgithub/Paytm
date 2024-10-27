@@ -5,6 +5,7 @@ import UpdateDetails from "./update";
 import SendMoney from "./sendMoney"; // Import the SendMoney component
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 import { useNavigate } from "react-router-dom";
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Dashboard() {
     const [balance, setBalance] = useState(0);
@@ -26,7 +27,7 @@ function Dashboard() {
         try {
             const token = localStorage.getItem('token');
             if(token){
-            const response = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=${query}`, {
+            const response = await axios.get(`${API_URL}/api/v1/user/bulk?filter=${query}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -44,7 +45,7 @@ function Dashboard() {
         const token = localStorage.getItem('token');
         setLoading(true); // Start loading
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/account/balance`, {
+            const response = await axios.get(`${API_URL}/api/v1/account/balance`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

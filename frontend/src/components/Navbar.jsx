@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import logo from "../media/payzip.png"
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Navbar() {
   const location = useLocation();

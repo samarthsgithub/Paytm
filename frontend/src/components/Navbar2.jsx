@@ -5,6 +5,7 @@ import { FaUserCircle, FaCaretDown } from "react-icons/fa"; // Import icons for 
 import logo from "../media/payzip.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Navbar2({onOpenUpdateDetails,isUpdated,setIsUpdated}) {
   const [username, setUsername] = useState("");
@@ -16,7 +17,7 @@ function Navbar2({onOpenUpdateDetails,isUpdated,setIsUpdated}) {
     const fetchSelf = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:3000/api/v1/user/me`, {
+        const response = await axios.get(`${API_URL}/api/v1/user/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

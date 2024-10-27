@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL;
 
 function UpdateDetails({ onClose,isUpdated,setIsUpdated }) {
   const [username, setUsername] = useState("");
@@ -10,7 +11,7 @@ function UpdateDetails({ onClose,isUpdated,setIsUpdated }) {
     const token = localStorage.getItem("token");
     try {
      const response =  await axios.put(
-        "http://localhost:3000/api/v1/user/update",
+        `${API_URL}/api/v1/user/update`,
         { username, password },
         {
           headers: {
