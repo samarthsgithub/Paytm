@@ -21,7 +21,7 @@ function Dashboard() {
 
     useEffect(() => {
         fetchUsers(searchQuery);
-    }, [searchQuery]);
+    }, [searchQuery,isUpdated]);
 
     const fetchUsers = async (query) => {
         try {
