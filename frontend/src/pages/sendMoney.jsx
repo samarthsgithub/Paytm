@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import '../send.css';
 import logo from "../media/home-page.png"; // Make sure this path is correct
 import axios from "axios";
-const API_URL = process.env.REACT_APP_API_URL;
+// const API_URL = 'https://payzip.onrender.com';
 
 function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
     const [amount, setAmount] = useState("");
@@ -11,7 +11,7 @@ function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
     const handleTransfer = async ()=>{
             const token = localStorage.getItem('token');
             try{
-               const response = axios.post(`${API_URL}/api/v1/account/transfer`,{amount,to:recieverId},{
+               const response = axios.post(`https://payzip.onrender.com/api/v1/account/transfer`,{amount,to:recieverId},{
                 headers:{
                     Authorization:`Bearer ${token}`
                 }

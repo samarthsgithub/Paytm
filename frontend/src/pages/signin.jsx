@@ -5,7 +5,7 @@ import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion";
 import image from "../media/Login-vector.png";
 import Navbar from "../components/Navbar";
-const API_URL = process.env.REACT_APP_API_URL;
+// const API_URL = 'https://payzip.onrender.com';
 
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +29,7 @@ function Signin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${API_URL}/api/v1/user/signin`, { email, password });
+            const response = await axios.post(`https://payzip.onrender.com/api/v1/user/signin`, { email, password });
             if (response.status === 201) {
                 localStorage.setItem('token', response.data.token);
                 navigate('/dashboard');
