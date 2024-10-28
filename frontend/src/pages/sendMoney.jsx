@@ -13,7 +13,7 @@ function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
             const token = localStorage.getItem('token');
             setLoading(true);
             try{
-               const response = axios.post(`https://payzip.onrender.com/api/v1/account/transfer`,{amount,to:recieverId},{
+               const response = await axios.post(`https://payzip.onrender.com/api/v1/account/transfer`,{amount,to:recieverId},{
                 headers:{
                     Authorization:`Bearer ${token}`
                 }
