@@ -7,9 +7,11 @@ import axios from "axios";
 function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
     const [amount, setAmount] = useState("");
     const [to,setTo] = useState("");
+    const[loading,setLoading] = useState(false);
 
     const handleTransfer = async ()=>{
             const token = localStorage.getItem('token');
+            setLoading(true);
             try{
                const response = axios.post(`https://payzip.onrender.com/api/v1/account/transfer`,{amount,to:recieverId},{
                 headers:{
@@ -17,7 +19,12 @@ function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
                 }
                })
                if(response.status === 201){
-                console.log("Transfer Successful");
+                setTimeout(()=>{
+                  setLoading(false);
+                  onClose();
+                  console.log("Transfer Successful");
+                },2000)
+                
                }
             }catch(err){
                 console.error(err);
@@ -26,7 +33,7 @@ function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-card">
+          {loading?<h1>Transferring Money</h1>:<div className="modal-card">
                 <div className="top-div">
                 <h1 className="modal-title">Send Money</h1>
                <button
@@ -71,7 +78,8 @@ function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
                 >
                     Initiate Transfer
                 </button>
-            </div>
+            </div>}
+            
         </div>
     );
 }
