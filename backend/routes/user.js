@@ -38,31 +38,34 @@ router.post('/signup',async function(req,res){
        }
 });
 
-router.post('/signin',async function(req,res){
-    const{email,password} = req.body;
-    try{
+router.post('/signin', async function(req, res) {
+  const { email, password } = req.body;
+  try {
       const user = await User.findOne({
-        email:email,
-        password:password
+          email: email,
+          password: password
       });
-      if(!user){
-        res.status(400).json({message:"user not found/exist"});
+      if (!user) {
+          return res.status(400).json({ message: "user not found/exist" });
       }
-      const token = jwt.sign({
-        userId:user._id
-      },JWT_SECRET);
 
-      res.status(201).json({
-        message:"signin successful",
-        token:token
-      })
-      return ;
-    }catch(err){
+      const token = jwt.sign(
+          { userId: user._id },
+          JWT_SECRET
+      );
+
+      return res.status(201).json({
+          message: "signin successful",
+          token: token
+      });
+  } catch (err) {
+      console.error(err);
       res.status(500).json({
-        message:"Server error"
-      })
-    }
-})
+          message: "Server error"
+      });
+  }
+});
+
 
 router.put('/update',userMiddleware,async function(req,res){
   const {username,password} = req.body;
