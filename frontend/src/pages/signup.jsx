@@ -9,6 +9,7 @@ import Navbar from "../components/Navbar";
 
 function Signup() {
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading,setIsLoading] = useState(false);
     const [username, setuserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -33,6 +34,8 @@ function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            if(isLoading) return;
+            setIsLoading(true);
             const response = await axios.post(`https://payzip.onrender.com/api/v1/user/signup`, { email, username, password });
             setEmail('');
             setuserName('');
@@ -44,6 +47,8 @@ function Signup() {
             }
         } catch (error) {
             console.error(error.response?.data || 'An error occurred');
+        }finally{
+            setIsLoading(false);
         }
     }
 
@@ -107,8 +112,9 @@ function Signup() {
                             <button
                                 type="submit"
                                 className="p-3 text-lg font-semibold bg-black text-white rounded hover:bg-green-700 transition duration-300"
+                                disabled={isLoading}
                             >
-                                Sign Up
+                                {isLoading?"Signing Up...":"Sign Up"}
                             </button>
                         </form>
                         <p className="text-center mt-4">
