@@ -1,11 +1,11 @@
-import React, { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom";
-import axios from "axios";
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion";
 import image from "../media/SignUp-vector.png";
 import Navbar from "../components/Navbar";
-// const API_URL = 'https://payzip.onrender.com';
+import ErrorBanner from "../components/ErrorBanner";
+import api, { errorMessage, getToken } from "../lib/api";
 
 function Signup() {
     const [showPassword, setShowPassword] = useState(false);
@@ -13,14 +13,13 @@ function Signup() {
     const [username, setuserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
 
     useEffect(()=>{
         const checkLoggedIn = ()=>{
-            const token = localStorage.getItem('token');
-            // console.log(API_URL);
-            if(token){
+            if(getToken()){
                 navigate('/dashboard')
             }
         };
@@ -33,24 +32,18 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isLoading) return;
+        setIsLoading(true);
+        setError('');
         try {
-            if(isLoading) return;
-            setIsLoading(true);
-            const response = await axios.post(`https://payzip.onrender.com/api/v1/user/signup`, { email, username, password });
-            setEmail('');
-            setuserName('');
-            setPassword('');
-            console.log(response);
-            if (response.status === 200) {
-                // localStorage.setItem('token',response.jwttoken);
-                navigate('/signin');
-            }
-        } catch (error) {
-            console.error(error.response?.data || 'An error occurred');
-        }finally{
+            await api.post('/api/v1/user/signup', { email, username, password });
+            navigate('/signin');
+        } catch (err) {
+            setError(errorMessage(err));
+        } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     return (
         <>
@@ -77,6 +70,7 @@ function Signup() {
                         </h1>
                         <p className="mb-6 text-gray-600">Enter your information to create an account</p>
                         <form onSubmit={handleSubmit} className="flex flex-col">
+                            <ErrorBanner message={error} />
                             <label className="mb-1 font-semibold">Name</label>
                             <input
                                 value={username}
@@ -97,7 +91,7 @@ function Signup() {
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
-                                    placeholder="Your Password"
+                                    placeholder="Password (min 8 characters)"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="p-3 mb-4 border border-gray-300 rounded w-full pr-10"

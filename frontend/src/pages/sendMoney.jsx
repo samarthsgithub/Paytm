@@ -1,87 +1,72 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 import '../send.css';
-import logo from "../media/home-page.png"; // Make sure this path is correct
-import axios from "axios";
-// const API_URL = 'https://payzip.onrender.com';
+import logo from "../media/home-page.png";
+import api, { errorMessage } from "../lib/api";
+import ErrorBanner from "../components/ErrorBanner";
 
-function SendMoney({receiverName,receiverEmail,recieverId,onClose}) {
+function SendMoney({ receiverName, recieverId, onClose, onSuccess }) {
     const [amount, setAmount] = useState("");
-    const [to,setTo] = useState("");
-    const[loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    // One key per modal: if the request is retried after a timeout, the server will not charge twice.
+    const [idempotencyKey] = useState(() => crypto.randomUUID());
 
-    const handleTransfer = async ()=>{
-            const token = localStorage.getItem('token');
-            setLoading(true);
-            try{
-               const response = await axios.post(`https://payzip.onrender.com/api/v1/account/transfer`,{amount,to:recieverId},{
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-               })
-               if(response.status === 201){
-                setTimeout(()=>{
-                  setLoading(false);
-                  onClose();
-                  console.log("Transfer Successful");
-                },2000)
-                
-               }
-            }catch(err){
-                console.error(err);
-            }
-    }
+    const handleTransfer = async () => {
+        const value = Number(amount);
+        if (!value || value <= 0) return setError("Enter an amount greater than 0");
+        setLoading(true);
+        setError("");
+        try {
+            await api.post("/api/v1/account/transfer", { amount: value, to: recieverId, idempotencyKey });
+            onSuccess?.();
+            onClose();
+        } catch (err) {
+            setError(errorMessage(err));
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="modal-overlay">
-          {loading?<h1>Transferring Money</h1>:<div className="modal-card">
+          {loading ? <h1>Transferring Money...</h1> : <div className="modal-card">
                 <div className="top-div">
-                <h1 className="modal-title">Send Money</h1>
-               <button
-                    onClick={onClose}
-                    className="close-button"
-                >
-                    ✖
-                </button>
-                
+                    <h1 className="modal-title">Send Money</h1>
+                    <button onClick={onClose} className="close-button" aria-label="Close">✖</button>
                 </div>
-                
 
-                {/* Logo Image */}
-                
-                    <img src={logo} alt="Logo" className="logo-image" />
-                
+                <img src={logo} alt="Logo" className="logo-image" />
 
-                {/* Receiver Info */}
                 <div className="receiver-info">
-                    <div className="receiver-name-circle">
-                    {receiverName.charAt(0).toUpperCase()}
-                    </div>
+                    <div className="receiver-name-circle">{receiverName.charAt(0).toUpperCase()}</div>
                     <div>
                         <h3 className="receiver-name">{receiverName}</h3>
                     </div>
                 </div>
 
-                {/* Amount Section */}
-                <label className="amount-label">Amount (in Rs)</label>
+                <label className="amount-label" htmlFor="amount">Amount (in Rs)</label>
                 <input
+                    id="amount"
                     type="number"
+                    min="0.01"
+                    step="0.01"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="amount-input"
                     placeholder="Enter amount"
                 />
-
-                {/* Transfer Button */}
-                <button
-                    onClick={handleTransfer}
-                    className="transfer-button"
-                >
-                    Initiate Transfer
-                </button>
+                <ErrorBanner message={error} />
+                <button onClick={handleTransfer} className="transfer-button">Initiate Transfer</button>
             </div>}
-            
         </div>
     );
 }
+
+SendMoney.propTypes = {
+    receiverName: PropTypes.string.isRequired,
+    recieverId: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onSuccess: PropTypes.func,
+};
 
 export default SendMoney;

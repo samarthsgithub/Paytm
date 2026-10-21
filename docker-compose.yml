@@ -1,0 +1,31 @@
+# Local development stack: `docker compose up --build`
+# MongoDB runs as a single-node replica set because multi-document transactions require one.
+services:
+  mongo:
+    image: mongo:7
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    ports: ["27017:27017"]
+    volumes: ["mongo-data:/data/db"]
+    healthcheck:
+      test: >
+        mongosh --quiet --eval
+        "try { rs.status().ok } catch (e) { rs.initiate({_id:'rs0',members:[{_id:0,host:'localhost:27017'}]}).ok }"
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
+
+  api:
+    build: ./backend
+    ports: ["3000:3000"]
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      MONGO_URI: mongodb://mongo:27017/payzip?directConnection=true
+      JWT_SECRET: local-dev-secret-change-me-0123456789abcdef
+      CORS_ORIGINS: http://localhost:5173
+    depends_on:
+      mongo: { condition: service_healthy }
+
+volumes:
+  mongo-data:

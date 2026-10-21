@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useState } from "react";
 import Typewriter from "typewriter-effect";
 import image from "../media/home-page.png";

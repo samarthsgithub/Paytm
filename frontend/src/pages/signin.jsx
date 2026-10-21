@@ -1,22 +1,23 @@
-import React, { useState,useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import {Link, useNavigate} from "react-router-dom";
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion";
 import image from "../media/Login-vector.png";
 import Navbar from "../components/Navbar";
-// const API_URL = 'https://payzip.onrender.com';
+import ErrorBanner from "../components/ErrorBanner";
+import api, { errorMessage, getToken, setToken } from "../lib/api";
 
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
    useEffect(()=>{
         const checkLoggedIn = ()=>{
-            const token = localStorage.getItem('token');
-            if(token){
+            if(getToken()){
                 navigate('/dashboard')
             }
         };
@@ -28,14 +29,16 @@ function Signin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isLoading) return;
+        setIsLoading(true);
+        setError('');
         try {
-            const response = await axios.post(`https://payzip.onrender.com/api/v1/user/signin`, { email, password });
-            if (response.status === 201) {
-                localStorage.setItem('token', response.data.token);
-                navigate('/dashboard');
-            }
-        } catch (error) {
-            console.error(error);
+            const response = await api.post('/api/v1/user/signin', { email, password });
+            setToken(response.data.token);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(errorMessage(err));
+            setIsLoading(false);
         }
     };
 
@@ -64,6 +67,7 @@ function Signin() {
                         </h1>
                         <p className="text-gray-600 mb-6">Enter your credentials to access your account</p>
                         <form onSubmit={handleSubmit} className="flex flex-col">
+                            <ErrorBanner message={error} />
                             <label className="mb-1 font-semibold">Email</label>
                             <input
                                 type="email"
@@ -90,13 +94,14 @@ function Signin() {
                             </div>
                             <button
                                 type="submit"
+                                disabled={isLoading}
                                 className="p-3 text-lg font-semibold bg-black text-white rounded hover:bg-green-700 transition duration-300"
                             >
-                                Sign In
+                                {isLoading ? "Signing in... (the server may be waking up)" : "Sign In"}
                             </button>
                         </form>
                         <p className="text-center mt-4">
-                            Don't have an account?{" "}
+                            Don&apos;t have an account?{" "}
                             <Link to="/signup" className="text-green-500 font-bold">Sign Up</Link>
                         </p>
                     </motion.div>

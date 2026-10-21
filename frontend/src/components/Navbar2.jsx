@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle, FaCaretDown } from "react-icons/fa"; // Import icons for profile and dropdown arrow
 import logo from "../media/payzip.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-// const API_URL = 'https://payzip.onrender.com';
+import PropTypes from "prop-types";
+import api, { clearToken } from "../lib/api";
 
-function Navbar2({onOpenUpdateDetails,isUpdated,setIsUpdated}) {
+function Navbar2({ onOpenUpdateDetails, isUpdated }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [showDropdown, setShowDropdown] = useState(false); // State for dropdown visibility
@@ -16,12 +15,7 @@ function Navbar2({onOpenUpdateDetails,isUpdated,setIsUpdated}) {
   useEffect(() => {
     const fetchSelf = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`https://payzip.onrender.com/api/v1/user/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get("/api/v1/user/me");
         setUsername(response.data.username);
         setEmail(response.data.email);
       } catch (err) {
@@ -38,7 +32,7 @@ function Navbar2({onOpenUpdateDetails,isUpdated,setIsUpdated}) {
 
   // Logout handler
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    clearToken();
      navigate('/signin');
   };
 
@@ -81,5 +75,10 @@ function Navbar2({onOpenUpdateDetails,isUpdated,setIsUpdated}) {
     </motion.nav>
   );
 }
+
+Navbar2.propTypes = {
+  onOpenUpdateDetails: PropTypes.func.isRequired,
+  isUpdated: PropTypes.bool,
+};
 
 export default Navbar2;

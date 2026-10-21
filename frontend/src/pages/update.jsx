@@ -1,31 +1,26 @@
-import React, { useState } from "react";
-import axios from "axios";
-// const API_URL = 'https://payzip.onrender.com';
+import { useState } from "react";
+import PropTypes from "prop-types";
+import api, { errorMessage } from "../lib/api";
+import ErrorBanner from "../components/ErrorBanner";
 
-function UpdateDetails({ onClose,isUpdated,setIsUpdated }) {
+function UpdateDetails({ onClose, setIsUpdated }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [error, setError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+    const changes = {};
+    if (username.trim()) changes.username = username.trim();
+    if (password) changes.password = password;
+    if (!Object.keys(changes).length) return setError("Enter a new username or password");
     try {
-     const response =  await axios.put(
-        `https://payzip.onrender.com/api/v1/user/update`,
-        { username, password },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      onClose(); // Close modal after updating
-    if(response.status===201){
-      setIsUpdated((prev)=>!prev);
-      console.log("user updated successfullllly");
-    }
-    } catch (error) {
-      console.error("Error updating details:", error);
+      await api.put("/api/v1/user/update", changes);
+      setIsUpdated((prev) => !prev);
+      onClose();
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
 
@@ -57,9 +52,10 @@ function UpdateDetails({ onClose,isUpdated,setIsUpdated }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter new password"
+              placeholder="New password (min 8 characters)"
             />
           </div>
+          <ErrorBanner message={error} />
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-semibold"
@@ -71,5 +67,10 @@ function UpdateDetails({ onClose,isUpdated,setIsUpdated }) {
     </div>
   );
 }
+
+UpdateDetails.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  setIsUpdated: PropTypes.func.isRequired,
+};
 
 export default UpdateDetails;
